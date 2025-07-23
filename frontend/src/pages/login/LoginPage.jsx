@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import './loginpage.css'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useLoginMutation } from '../../api/authApi'
+
 
 
 const LoginPage = () => {
@@ -9,20 +10,22 @@ const LoginPage = () => {
     const [password,setPassword]=useState('');
     const [errors,setErrors]=useState({})
     const [login,{isError,isLoading}]=useLoginMutation();
+    const navigate=useNavigate();
 
     const handleUsername=(e)=>setUsername(e.target.value);
     const handlePassword=(e)=>setPassword(e.target.value);
 
+
     const handleSubmit=async (e)=>{
         e.preventDefault()
 
-        // if(username.trim()===''){
-        //     setErrors()
-        // }
-
         try{
             const res=await login({username,password}).unwrap();
-            console.log(res)
+            localStorage.setItem('access_token',res.access_token)
+            setUsername('')
+            setPassword('')
+            navigate('/')
+
 
         }
         catch(err){

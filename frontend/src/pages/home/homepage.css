@@ -1,0 +1,16 @@
+.homepage{
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: space-between; */
+    position: relative;
+}
+.post-status{
+    position: absolute;
+    left: 350px;
+}
+.suggest{
+    position: absolute;
+    left: 1200px;
+}

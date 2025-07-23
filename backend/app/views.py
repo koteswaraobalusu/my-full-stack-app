@@ -5,9 +5,13 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer
+from .serializers import UserSerializer,UserSuggestionsSerializer,UserProfileSerializer
+from .models import UserProfile
+from rest_framework import generics
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your views here.
 User=get_user_model()
 
@@ -25,6 +29,7 @@ class LoginAPIView(APIView):
             access_token=str(refresh.access_token)
             refresh_token=str(refresh)
             response=Response({'message': 'Login successful','access_token':access_token})
+
 
             response.set_cookie(
                 key='refresh_token',
@@ -77,7 +82,7 @@ class UserRegisterAPIView(APIView):
 class RefreshAPIView(APIView):
     def post(self, request, format=None):
         old_refresh_token = request.COOKIES.get('refresh_token')
-        print(old_refresh_token)
+        
 
         if not old_refresh_token:
             return Response({'error': 'No refresh token found'}, status=status.HTTP_400_BAD_REQUEST)
@@ -101,7 +106,7 @@ class RefreshAPIView(APIView):
             # Issue new tokens
             new_refresh = RefreshToken.for_user(user)
             new_access = str(new_refresh.access_token)
-            print(str(new_refresh))
+            
 
             # Return response with new access token + new refresh token in cookie
             response = Response({'access': new_access})
@@ -147,3 +152,31 @@ class MeAPIView(APIView):
             'username': user.username,
             'email': user.email
         })
+
+class AuthStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({'message': 'Authenticated'}, status=200)
+    
+class UserSuggestionsAPIView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request,format=None):
+        users=User.objects.exclude(id=request.user.id)
+        serializer = UserSuggestionsSerializer(users, many=True)
+        return Response(serializer.data)
+
+
+class UserProfileDetailView(generics.RetrieveUpdateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self):
+        return self.request.user.profile
+    
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)

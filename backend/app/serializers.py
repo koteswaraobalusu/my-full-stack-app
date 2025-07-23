@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from .models import UserProfile
 from rest_framework.serializers import ValidationError
 import re
 
@@ -41,3 +42,17 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
             )
         return user
+    
+class UserSuggestionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['id','username']
+    
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    followers_count = serializers.IntegerField(read_only=True)
+    following_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['id', 'user', 'profile_image', 'bio', 'website', 'location', 'birth_date', 'followers_count', 'following_count']

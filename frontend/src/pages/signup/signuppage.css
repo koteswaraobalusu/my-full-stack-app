@@ -7,7 +7,7 @@
     padding: 20px;
 }
 
-.login h1 {
+.signup h1 {
     font-family: "Cookie", cursive;
     font-weight: 400;
     font-style: normal;
@@ -15,51 +15,54 @@
     text-align: center;
     margin: 20px;
 }
-
-.login form input{
+.fieldset input{
     width: 100%;
-    padding: 10px;
+    padding: 13px;
     margin-bottom: 20px;
 }
-.login form input[type='submit']{
-    background: #1877F2;
+
+form input[type='submit']{
+    width: 100%;
+    color: white;
+    padding: 10px;
+    background: #6792ca;
     border: none;
-    outline: none;
-    color: #fff;
-    font-size: 1.3em;
-    font-weight: 300;
     border-radius: 10px;
+    font-weight: 500;
+    font-size: 24px;
 }
-.login form input[type='submit']:hover{
-    background: #156de0;
+form input[type='submit']:hover{
+    cursor: pointer;
+    background: #1877F2;
 }
-/* .login form input:not([type='submit']):focus ,
-.login form input:not([type='submit']):valid {
-    border: 1px solid rgb(43, 14, 237);
-} */
-.link{
-    text-align: center;
+.link p{
+    margin-top: 10px;
+    font-size: 17px;
+}
+.fieldset .errors{
+    margin-top: -20px;
 }
 
+
 @media only screen and (max-width: 500px) {
-    .login {
+    .signup {
         width: 90%;             /* Make it responsive */
         height: auto;           /* Let height expand */
         padding: 15px;
         margin: 0 auto;         /* Center on small screens */
     }
 
-    .login h1 {
+    .signup h1 {
         font-size: 2em;       /* Smaller title */
         margin: 10px auto;
     }
 
-    .login form input {
+    .fieldset input {
         padding: 8px;
         font-size: 0.9em;
     }
 
-    .login form input[type='submit'] {
+    form input[type='submit'] {
         font-size: 1em;
         padding: 10px;
     }

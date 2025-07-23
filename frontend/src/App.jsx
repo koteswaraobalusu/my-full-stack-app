@@ -1,36 +1,32 @@
 import React, { useEffect } from 'react'
-import LoginPage from './pages/login/LoginPage'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import SignupPage from './pages/signup/SignupPage'
+import { BrowserRouter as Router} from 'react-router-dom'
 import { useRefreshMutation } from './api/authApi'
+import AppLayout from './AppLayout'
+
+
+
+
 
 
 const App = () => {
-  const [refresh] = useRefreshMutation(); // ✅ use this trigger function
+  const [refresh]=useRefreshMutation()
+useEffect(() => {
+  const interval = setInterval(async () => {
+    try {
+      const res = await refresh().unwrap();
+      localStorage.setItem('access_token', res.access);
+      console.log("refresh")
+    } catch (err) {
+      console.log('Auto refresh failed');
+    }
+  },29* 60 * 1000);
 
-  useEffect(() => {
-    const updateRefresh = async () => {
-      try {
-        const res=await refresh(); // ✅ triggers the refresh mutation
-        console.log(res)
-      } catch (err) {
-        console.error("Refresh failed:", err);
-      }
-    };
-
-    setTimeout(
-      ()=>{
-        updateRefresh();
-      },60*1000
-    )
-  }, []);
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <Router>
-        <Routes>
-            <Route path='/login' element={<LoginPage/>}/>
-            <Route path='/signup' element={<SignupPage/>}/>
-        </Routes>
+        <AppLayout/>
       
     </Router>
   )
